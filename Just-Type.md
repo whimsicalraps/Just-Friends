@@ -164,67 +164,75 @@ NEW Geode now accepts 'float' ii commands from crow in range (1.0 .. 20.0)
 
 *Proposed getters, yet to be implemented as of Teletype 3.2*
 
-`JF.TR channel` Returns true if the channel is in motion
-`JF.RMODE` Returns the state of run_mode (ignores the jack)
-`JF.RUN` Returns the current RUN value (ignores the jack)
-`JF.SHIFT` Returns the current transpose setting
-`JF.MODE` Returns 1 if *Synthesis* or *Geode* are active
-`JF.TICK` Returns the current *Geode* tempo in beats per minute
-`JF.GOD` Returns 1 if god mode is active
-`JF.QT` Returns the number of *divisions* quantize is set to
-`JF.SPEED` Returns the current *shape* (0) or *sound* (1) switch position
-`JF.TSC` Returns the current *MODE* switch state (1/2/3)
-`JF.RAMP` Returns the current state of the *RAMP* knob
-`JF.CURVE` Returns the current state of the *CURVE* knob
-`JF.FM` Returns the current state of the *FM* knob
-`JF.TIME` Returns the current state of the *TIME* knob + cv
-`JF.INTONE` Returns the current state of the *INTONE* knob + cv
+* `JF.TR channel` Returns true if the channel is in motion
+* `JF.RMODE` Returns the state of run_mode (ignores the jack)
+* `JF.RUN` Returns the current RUN value (ignores the jack)
+* `JF.SHIFT` Returns the current transpose setting
+* `JF.MODE` Returns 1 if *Synthesis* or *Geode* are active
+* `JF.TICK` Returns the current *Geode* tempo in beats per minute
+* `JF.GOD` Returns 1 if god mode is active
+* `JF.QT` Returns the number of *divisions* quantize is set to
+* `JF.SPEED` Returns the current *shape* (0) or *sound* (1) switch position
+* `JF.TSC` Returns the current *MODE* switch state (1/2/3)
+* `JF.RAMP` Returns the current state of the *RAMP* knob
+* `JF.CURVE` Returns the current state of the *CURVE* knob
+* `JF.FM` Returns the current state of the *FM* knob
+* `JF.TIME` Returns the current state of the *TIME* knob + cv
+* `JF.INTONE` Returns the current state of the *INTONE* knob + cv
 
 # crow reference
 
 ### Set values or send commands:
 
-`ii.jf.trigger( channel, state )` Set trigger *channel* to *state*
-`ii.jf.run_mode( mode )` Set RUN state to *mode*
-`ii.jf.run( volts )` Set RUN voltage to *volts*
-`ii.jf.transpose( pitch )` Transpose frequency / speed by *pitch* (v/8)
-`ii.jf.vtrigger( channel, level )` Trigger *channel* with velocity set by *level*
-`ii.jf.retune( channel, numerator, denominator )` Alter the INTONE relationship to IDENTITY
-`ii.jf.mode( mode )` Activates *Synthesis* or *Geode*
-`ii.jf.address( index )` Set all connected Just Friends to ii address *index*
+```lua
+ii.jf.trigger( channel, state ) -- Set trigger *channel* to *state*
+ii.jf.run_mode( mode ) -- Set RUN state to *mode*
+ii.jf.run( volts ) -- Set RUN voltage to *volts*
+ii.jf.transpose( pitch ) -- Transpose frequency / speed by *pitch* (v/8)
+ii.jf.vtrigger( channel, level ) -- Trigger *channel* with velocity set by *level*
+ii.jf.retune( channel, numerator, denominator ) -- Alter the INTONE relationship to IDENTITY
+ii.jf.mode( mode ) -- Activates *Synthesis* or *Geode*
+ii.jf.address( index ) -- Set all connected Just Friends to ii address *index*
+```
 
 *Synthesis*
 
-`ii.jf.play_note( pitch, level )` Play a note, dynamically allocated to a voice
-`ii.jf.play_voice( channel, pitch, level )` Play a note on a specific voice
-`ii.jf.pitch( channel, pitch )` Same as `play_voice` but doesn't trigger the envelope
-`ii.jf.god_mode( state )` If *state*, retune to A=432Hz (default A=440Hz)
+```lua
+ii.jf.play_note( pitch, level ) -- Play a note, dynamically allocated to a voice
+ii.jf.play_voice( channel, pitch, level ) -- Play a note on a specific voice
+ii.jf.pitch( channel, pitch ) -- Same as play_voice but doesn't trigger the envelope
+ii.jf.god_mode( state ) -- If *state*, retune to A=432Hz (default A=440Hz)
+```
 
 *Geode*
 
-`ii.jf.play_note( divs, repeats )` Play a sequence, dynamically allocated to a channel
-`ii.jf.play_voice( channel, divs, repeats )` Play a sequence on a specific *channel*
-`ii.jf.tick( divs )` Clock *Geode* with a stream of ticks at *divs* per measure
-`ii.jf.tick( bpm )` Set timebase for *Geode* with a static *bpm*
-`ii.jf.quantize( divisions )` Quantize *Geode* events to *divisions* of the timebase
+```lua
+ii.jf.play_note( divs, repeats ) -- Play a sequence, dynamically allocated to a channel
+ii.jf.play_voice( channel, divs, repeats ) -- Play a sequence on a specific *channel*
+ii.jf.tick( divs ) -- Clock *Geode* with a stream of ticks at *divs* per measure
+ii.jf.tick( bpm ) -- Set timebase for *Geode* with a static *bpm*
+ii.jf.quantize( divisions ) -- Quantize *Geode* events to *divisions* of the timebase
+```
 
 ### Request values and states:
 
-`ii.jf.get( 'trigger', channel )` Returns true if the channel is in motion
-`ii.jf.get( 'run_mode' )` Returns the state of run_mode (ignores the jack)
-`ii.jf.get( 'run' )` Returns the current RUN value (ignores the jack)
-`ii.jf.get( 'transpose' )` Returns the current transpose setting
-`ii.jf.get( 'mode' )` Returns 1 if *Synthesis* or *Geode* are active
-`ii.jf.get( 'tick' )` Returns the current *Geode* tempo in beats per minute
-`ii.jf.get( 'god_mode' )` Returns 1 if god mode is active
-`ii.jf.get( 'quantize' )` Returns the number of *divisions* quantize is set to
-`ii.jf.get( 'speed' )` Returns the current *shape* (0) or *sound* (1) switch position
-`ii.jf.get( 'tsc' )` Returns the current *MODE* switch state (1/2/3)
-`ii.jf.get( 'ramp' )` Returns the current state of the *RAMP* knob
-`ii.jf.get( 'curve' )` Returns the current state of the *CURVE* knob
-`ii.jf.get( 'fm' )` Returns the current state of the *FM* knob
-`ii.jf.get( 'time' )` Returns the current state of the *TIME* knob + cv
-`ii.jf.get( 'intone' )` Returns the current state of the *INTONE* knob + cv
+```lua
+ii.jf.get( 'trigger', channel )` -- Returns true if the channel is in motion
+ii.jf.get( 'run_mode' ) -- Returns the state of run_mode (ignores the jack)
+ii.jf.get( 'run' ) -- Returns the current RUN value (ignores the jack)
+ii.jf.get( 'transpose' ) -- Returns the current transpose setting
+ii.jf.get( 'mode' ) -- Returns 1 if *Synthesis* or *Geode* are active
+ii.jf.get( 'tick' ) -- Returns the current *Geode* tempo in beats per minute
+ii.jf.get( 'god_mode' ) -- Returns 1 if god mode is active
+ii.jf.get( 'quantize' ) -- Returns the number of *divisions* quantize is set to
+ii.jf.get( 'speed' ) -- Returns the current *shape* (0) or *sound* (1) switch position
+ii.jf.get( 'tsc' ) -- Returns the current *MODE* switch state (1/2/3)
+ii.jf.get( 'ramp' ) -- Returns the current state of the *RAMP* knob
+ii.jf.get( 'curve' ) -- Returns the current state of the *CURVE* knob
+ii.jf.get( 'fm' ) -- Returns the current state of the *FM* knob
+ii.jf.get( 'time' ) -- Returns the current state of the *TIME* knob + cv
+ii.jf.get( 'intone' ) -- Returns the current state of the *INTONE* knob + cv
+```
 
 Receive requested values (only the names you are querying need to be included in this list):
 
