@@ -189,7 +189,7 @@ JF2.TR 1 1
 ```
 
 
-### Panel Queries
+## Panel Queries
 
 The physical panel settings are able to queried too. With some outside-the-box thinking, you can use the Just Friends panel to manipulate parameters inside your script. This could augment the controls (eg. the *CURVE* value could change `vtrigger` level), or introduce additional dimensions (eg. *FM* could select different `TUNE` / `retune` ratios).
 
