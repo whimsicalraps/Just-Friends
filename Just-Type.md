@@ -54,15 +54,15 @@ Create a TRIGGER event on the `channel` with the provided `state`.
 
 `channel`
 * 1 is IDENTITY, and 6 is 6N
-* 0 creates a TRIGGER on *all* channels (hardware normalization is ignored)
+* 0 creates a TRIGGER on all 6 channels (hardware normalization is ignored)
 
 `state`
-* 1 is *high* (5V). All non-zero values treated as high.
+* 1 is *high* (5V). All non-zero values are treated as high
 * 0 is *low* (0V)
 
-Only *sustain* cares about the 'low' triggers (the others modes will simply ignore this message).
+Only *sustain* cares about the *low* triggers (the others modes will simply ignore this message).
 
-#### `JF.TR channel` *(proposed)* / `ii.jf.get('trigger')`
+#### `JF.TR channel` *(proposed)* / `ii.jf.get('trigger', channel)`
 
 Returns 1 if the *channel* is moving. If *channel* is 0, returns the count of all active channels.
 
@@ -93,7 +93,7 @@ Send a virtual voltage to the RUN input.
 * On TT use `JF.RUN V x` to set to x volts.
 * Range is -5 to +5
 
-*Requires JF.RMODE 1 to have been executed*.
+*Requires `JF.RMODE 1` / `ii.jf.run_mode(1)` to have been executed*.
 
 #### `JF.RUN` *(proposed)* / `ii.jf.get( 'run' )`
 
@@ -114,7 +114,8 @@ Shifts the transposition of Just Friends, regardless of speed setting. Shifting 
 `pitch`
 * Amount to shift base pitch by
 * On Teletype, use `N x` for semitones, or `V y` for octaves
-* On crow use `1.0` for volts, or `1/12` for semitones
+* On crow use `1.0` for octaves, or `1/12` for semitones
+* Microtonal transpositions are allowed to (especially useful for tuning)
 
 #### `JF.SHIFT` *(proposed)* / `ii.jf.get( 'transpose' )`
 
@@ -127,7 +128,7 @@ Returns the current transposition setting.
 
 Trigger *channel* with velocity set by *level*
 
-Like Trigger but with added volume control. Velocity is scaled with volts, so try `V 5` / `5.0` for an output trigger of 5 volts. Channels remember their latest velocity setting and apply it regardless of TRIGGER origin (digital or physical).
+Like Trigger but with added volume control. Velocity is scaled with volts, so try `V 5` / `5.0` for an output trigger of 5 volts. Channels remember their latest velocity setting and apply it regardless of whether the TRIGGER comes digitally or via CV.
 
 `chan`
 * channel to trigger
@@ -135,6 +136,7 @@ Like Trigger but with added volume control. Velocity is scaled with volts, so tr
 
 `level`
 * amplitude of output in volts
+* 0 is treated as a 'low' state, and doesn't change the saved velocity (same as `JF.TR chan 0`)
 
 
 ### Tuning and Intonation
@@ -156,20 +158,21 @@ Tuning is defined as a pitch ratio: numerator `n` / denominator `d`. `1/1` is ID
 
 *Reset to default tuning with `JF.TUNE 0 0 0` / `retune(0,0,0).`*
 
-If you want to retain your custom tuning more permanently (across power-cycles), send the special command `JF.TUNE -1 0 0` / `retune(-1,0,0)` which will store the setup on chip. When you restart the module, it will automatically use these values.
+If you want to retain your custom tuning permanently (across power-cycles), send the special command `JF.TUNE -1 0 0` / `retune(-1,0,0)` which will store the setup to memory. When you restart the module, it will automatically recall the custom tuning.
 
 
-### Address (communicate with multiple Just Friends simultaneously)
+### Address (communicateing with two Just Friends simultaneously)
 
 #### `JF.ADDR index` *(proposed)* / `ii.jf.address( index )`
 
-This is only useful when configuring an ii network with more than one Just Friends device. Note that all devices default to index 1.
+This is only useful when configuring an ii network with two Just Friends device. Note that all devices default to index 1.
 
 1. Power down your case
 2. Disconnect the Just Friends that will be index #1 from the i2c bus
 3. Make sure your second device is connected
 4. Power on the case
-5. Run the above address command with an index of 2.
+5. Run the above address command with an index of 2: `JF.ADDR 2` / `ii.jf.address(2)`
+6. Test you can now talk to the second device: `JF2.TR 1 1` / `ii.jf[2].trigger(1,1)`
 6. Power down the case
 7. Reconnect the Just Friends from step 2.
 8. Power on the case
@@ -191,11 +194,11 @@ JF2.TR 1 1
 
 ## Panel Queries
 
-The physical panel settings are able to queried too. With some outside-the-box thinking, you can use the Just Friends panel to manipulate parameters inside your script. This could augment the controls (eg. the *CURVE* value could change `vtrigger` level), or introduce additional dimensions (eg. *FM* could select different `TUNE` / `retune` ratios).
+The physical panel settings are able to be queried too. With some outside-the-box thinking, you can use the Just Friends panel to manipulate parameters inside your script. This could augment the controls (eg. the *CURVE* value could change `vtrigger` level), or introduce additional dimensions (eg. *FM* could select different `TUNE` / `retune` ratios).
 
-While the lower 3 jacks (*RAMP*, *FM*, *CURVE*) send only the knob position, *TIME* and *INTONE* send a combination of the knob with any received CV. These signals are also mapped to the same scale as Just Type in *Synthesis* mode (see below). That means, a value of `V 0` / `0.0` is equal to C3. As such you could rapidly query the *TIME* control and convert it to a control-voltage with Teletype or crow - allowing for Just Friends to control the base pitch of multiple oscillators.
+While the lower 3 jacks (*RAMP*, *FM*, *CURVE*) send only the knob position, *TIME* and *INTONE* send a combination of the knob with any received CV. These signals are also mapped to the same scaling as Just Type in *Synthesis* mode (see below). That means, a value of `V 0` / `0.0` is equal to C3. As such you could rapidly query the *TIME* control and convert it to a control-voltage with Teletype or crow - allowing for Just Friends to control the base pitch of multiple oscillators.
 
-Finally the parameters can be used entirely tangentially to Just Friends' functionality. *RAMP* could could the rate of a METRO, while *sound*/*shape* chose between major and minor arpeggios.
+Finally the parameters can be used entirely tangentially to Just Friends' functionality. *RAMP* could control the rate of a METRO, while *sound*/*shape* choose between major and minor arpeggios.
 
 
 #### `JF.SPEED` *(proposed)* / `ii.jf.get( 'speed' )`
@@ -204,45 +207,50 @@ Returns the current *shape* (0) or *sound* (1) switch position
 
 #### `JF.TSC` *(proposed)* / `ii.jf.get( 'tsc' )`
 
-Returns the current *MODE* switch state (1/2/3)
+Returns the current *MODE* switch state
+* 1 = *transient*
+* 2 = *sustain*
+* 3 = *cycle*
 
 #### `JF.RAMP` *(proposed)* / `ii.jf.get( 'ramp' )`
 
-Returns the current state of the *RAMP* knob
+Returns the current state of the *RAMP* knob in volts (-5,5)
 
 #### `JF.CURVE` *(proposed)* / `ii.jf.get( 'curve' )`
 
-Returns the current state of the *CURVE* knob
+Returns the current state of the *CURVE* knob in volts (-5,5)
 
 #### `JF.FM` *(proposed)* / `ii.jf.get( 'fm' )`
 
-Returns the current state of the *FM* knob
+Returns the current state of the *FM* knob in volts (-5,5)
 
 #### `JF.TIME` *(proposed)* / `ii.jf.get( 'time' )`
 
-Returns the current state of the *TIME* knob + cv
+Returns the current state of the *TIME* knob + cv in volts (-5,5)
 
 #### `JF.INTONE` *(proposed)* / `ii.jf.get( 'intone' )`
 
-Returns the current state of the *INTONE* knob + cv
+Returns the current state of the *INTONE* knob + cv in volts
+* 0 = C3
+* 1V/octave scaled
 
 
 ## Modal Personality
 
 Until now, we've only been speaking of modifying or extending the base Just Friends behaviours. Conversely, it is also possible to change some fundamentals of the JF system, leaning more heavily on the Teletype / crow integration for configuration and control.
 
-These alternate personalities are *Synthesis*, a polyphonic synthesizer; and *Geode*, a rhythm machine. `JF.MODE 1` / `ii.jf.mode(1)` will take you to these modes respective of the *sound*/*shape* setting. Beware that whilst in Just Type's alternate modes, things will behave differently to normal & will remain there until power-cycling or exiting with `JF.MODE 0` / `ii.jf.mode(0)`.
+These alternate personalities are *Synthesis*, a polyphonic synthesizer; and *Geode*, a rhythm machine. `JF.MODE 1` / `ii.jf.mode(1)` will take you to these modes depending on the *sound*/*shape* setting. Beware that whilst in Just Type's alternate modes, things will behave differently to normal & will remain there until power-cycling or exiting with `JF.MODE 0` / `ii.jf.mode(0)`.
 
-#### `JF.MODE state` / `ii.jf.mode( mode )`
+#### `JF.MODE state` / `ii.jf.mode( state )`
 
 Activates *Synthesis* or *Geode* modalities.
 
 
-`mode`
-* 1 (or non-zero) activates JT alternate modes
+`state`
+* 1 activates JT alternate modes. Any non-zero value is treated as 1.
 * 0 returns to standard functionality
 
-You'll likely want to put `JF.MODE x` / `mode(x)` in your Teletype / crow INIT script.
+You'll likely want to put `JF.MODE x` / `ii.jf.mode(x)` in your Teletype / crow INIT script.
 
 
 #### `JF.MODE` *(proposed)* / `ii.jf.get( 'mode' )`
@@ -252,15 +260,15 @@ Returns 1 if either *Synthesis* or *Geode* are active.
 
 ## Synthesis
 
-Synthesis is as its name boringly suggests, a synthesizer. Further, it is a polyphonic synthesizer of six independent voices. Control is either explicitly per voice, or can be dynamically assigned in a traditional polysynth fashion.
+Synthesis is, as its name boringly suggests, a synthesizer. Further, it is a polyphonic synthesizer of six independent voices. Control is either explicitly per voice, or can be dynamically assigned in a traditional polysynth fashion.
 
-Enter *Synthesis* with `JF.MODE 1` / `mode(1)` and switching to *sound*.
+Enter *Synthesis* with `JF.MODE 1` / `ii.jf.mode(1)` and switching to *sound*.
 
-The voices are centered around Just Friends' manifold generators, with pitch controlled digitally rather than with the panel controls. Each generator is shaped by RAMP & CURVE as per normal, then passed to a Vactrol Low-Pass Gate model to impart dynamics. The Vactrol model implements rudimentary envelope shaping of the velocity, controlled by TIME, for envelope speed, and INTONE, for attack-release shaping. These envelopes are controlled by the transient / sustain / cycle mode, and may be excited either digitally or via the hardware TRIGGERS.
+The voices are centered around Just Friends' manifold generators, with pitch controlled digitally rather than with the panel controls. Each generator is shaped by *RAMP* & *CURVE* as per normal, then passed to a Vactrol Low-Pass Gate model to impart dynamics. The Vactrol model implements rudimentary envelope shaping of the velocity, controlled by *TIME*, for envelope speed, and *INTONE*, for attack-release shaping. These envelopes are controlled by the *transient* / *sustain* / *cycle* switch, and may be excited either digitally or via the hardware *TRIGGERS*.
 
-Internally each voice contains a linked sinewave oscillator providing frequency modulation over the function generator. FM amount or index, is controlled with the FM knob & CV input. The knob functions as normal with INTONE modulation CCW, and uniform modulation CW. CV input is a traditional CV-offset where positive voltage increases, and negative decreases modulation. The frequency relationship between the modulation & carrier oscillators is set via the RUN jack, though is matched at 1:1 with no cable attached. Positive voltages move toward 2:1 at 5V, while negative sweeps down to 1:2 at -5V giving many grumbles.
+Internally each voice contains a linked sinewave oscillator providing frequency modulation over the function generator. FM index (ie. amount), is controlled with the *FM* knob & CV input. The knob functions as normal with INTONE-style modulation CCW, and uniform modulation CW. *FM* CV input is a traditional CV-offset where positive voltage increases, and negative decreases modulation. The frequency relationship between the modulation & carrier oscillators is set via the *RUN* jack, though is matched at 1:1 with no cable attached. Positive voltages move toward 2:1 at 5V, while negative sweeps down to 1:2 at -5V giving many grumbles.
 
-The JF.VOX and JF.NOTE commands are designed to create complete notes in the General MIDI sense. They simultaneously set the pitch of a voice & begin / end an envelope cycle. Physical TRIGGERS on the other hand, will only trigger the envelope, using whatever pitch & velocity are currently set for that voice, encouraging combinations of digital & voltage control.
+The `VOX` / `play_voice` and `NOTE` / `play_note` commands are designed to create complete notes in the General MIDI sense. They simultaneously set the pitch of a voice & begin / end an envelope cycle. Physical `TRIGGERS` on the other hand, will only trigger the envelope, using whatever pitch & velocity are currently set for that voice, encouraging combinations of digital & voltage control. Pitch can be set directly with `PITCH` / `pitch` to slew between tones without triggering notes.
 
 
 ### Individual voice control (6 monosynth voices)
@@ -274,28 +282,28 @@ Play a note on the specified *channel* at the defined *pitch* and *level*.
 * 0 sets all channels simultaneously.
 
 `pitch`
-* set the pitch in volts-per-octave
+* set the pitch in 1V/octave
 * `V 0` / `0.0` is C3
 
 `level`
-* set the volume as in `JF.VTR` / `vtrigger()`
+* set the volume as in `VTR` / `vtrigger`
 * `V 5` / `5.0` gives 5V peak to peak (ie. standard modular level)
 
-Assigning notes with voice control is great if you want to sequence independent synthesizer lines on the different channels. By using the FM control in the counter-clockwise direction, you can give each voice its own character, as the higher-numbered voices will have greater FM modulation applied.
+Assigning notes with voice control is great if you want to sequence independent synthesizer lines on the different channels. By using the *FM* control in the counter-clockwise direction, you can give each voice its own character, as the higher-numbered voices will have greater frequency modulation applied.
 
 
 ### Dynamic voice allocation (6-voice polysynth)
 
 #### `JF.NOTE pitch level` / `ii.jf.play_note( pitch, level )`
 
-Polyphonically allocated note sequencing. Works like `JF.VOX` / `play_voice()` but with *channel* selected automatically. In *sustain*, free voices will be prioritized. If all voices are currently sustaining, the oldest note will be stolen to play the new note.
+Polyphonically allocated note sequencing. Works like `VOX` / `play_voice` but with *channel* selected automatically. In *sustain*, free voices will be prioritized. If all voices are currently sustaining, the oldest note will be stolen to play the new note.
 
 `pitch`
-* set the pitch in volts-per-octave
+* set the pitch in 1V/octave
 * `V 0` / `0.0` is C3
 
 `level`
-* set the volume as in `JF.VTR` / `vtrigger()`
+* set the volume as in `VTR` / `vtrigger`
 * `V 5` / `5.0` gives 5V peak to peak (ie. standard modular level)
 
 `VOX` and `NOTE` are interactive, meaning you can create interesting splits of mono and poly voices.
@@ -317,7 +325,7 @@ Control the *pitch* of a chosen *channel* without triggering the envelope (like 
 * set the pitch in volts-per-octave
 * `V 0` / `0.0` is C3
 
-This command is useful along with voice & note control to introduce pitch changes while a note is decaying (*transient*), or without retriggering the cyclic envelope (*cycle*). Additionally it can be very useful where you are TRIGGERing the channels with CV pulses, but want to choose scales or chords digitally.
+This command is useful along with `VOX` & `NOTE` control to introduce pitch changes while a note is decaying (*transient*), or without retriggering the cyclic envelope (*cycle*). Additionally it can be very useful where you are *TRIGGER*ing the channels with CV pulses, but want to choose scales or chords digitally.
 
 
 ### Attuned Vibrations
@@ -339,15 +347,15 @@ Returns 1 if god mode is active.
 
 In *shape*, Just Type inherits it's functionality from the standard mode. However, atop it sits a rhythmic engine for polymetric & -phasic patterns. Fundamentally this is a 'clocked' mode, whether internally so or via a continuous `tick`. The TIME & INTONE controls maintain their standard free-running influence, speeding up and slowing down *envelopes*, while the rhythms are controlled remotely.
 
-Notes in Geode are a combination of a standard trigger along with a number of *repeats* & a rhymthic *division*. The former sets the number of envelope events to create, while the latter chooses the rhythmic relation of those repeats to the core timebase. The MODE switch selects how the amplitudes of repeated elements change over time. These changes are further modified by the RUN jack for fluid rhythmic variation under voltage control. These undulations are highly interactive with the TIME & INTONE controls, where the different MODE settings will handle overlapping repeats in drastically different ways. Start with TIME set very fast, then dial it back to hear how the repeats entangle.
+Notes in Geode are a combination of a standard trigger along with a number of *repeats* & a rhymthic *division*. The former sets the number of envelope events to create, while the latter chooses the rhythmic relation of those repeats to the core timebase. The *MODE* switch selects how the amplitudes of repeated elements change over time. These changes are further modified by the RUN jack for fluid rhythmic variation under voltage control. These undulations are highly interactive with the *TIME* & *INTONE* controls, where the different MODE settings will handle overlapping repeats in drastically different ways. Start with *TIME* set very fast, then dial it back to hear how the repeats entangle.
 
-Once these rhythmic streams are moving, their pattern can be corralled into a set of *quantized* steps. Using odd-subdivisions for notes, with even quantize, will enable patterns to break out of the evenly spaced repeat model. Try prime numbers (5/7/11) for divisions, but 4/8/16 for quantize to create traditional syncopated rhythms.
+Once these rhythmic streams are moving, their pattern can be corralled into a set of *quantized* steps. Using odd-subdivisions for notes, with even quantize, will enable patterns to break out of the evenly-spaced-repeats model. Try prime numbers (5/7/11) for divisions, but 4/8/16 for quantize to create traditional syncopated rhythms.
 
 ### Geode: Transient
 
 When set to *transient*, each repeat will have the full velocity (or a reduced one set by `VTR` / `vtrigger()`).
 
-RUN voltages will introduce a rhythmic variation ever *n* repeats. At 0V, every note is emphasized (hence sounding static). Increasing, every 2nd note is emphasized. Further a cycle of 3 velocities is introduced, and so on up to a cycle of 10 notes. The velocities decrease in a 'sawtooth' pattern.
+RUN voltages will introduce a rhythmic variation every *n* repeats. At 0V, every note is emphasized (hence sounding static). Increasing a little and every 2nd note is emphasized. Further and a cycle of 3 velocities is introduced, and so on up to a cycle of 10 notes. The velocities decrease in a 'sawtooth' pattern.
 
 With negative voltages, the same cycles are introduced, however the pattern is reversed, dropping the volume at first, then rising up over *n* repeats.
 
@@ -358,11 +366,11 @@ Regular syncopated rhythms are great here. Try 8 *repeats*, triggered every 8 cl
 
 In *sustain* repeats decay to silence over the duration of *repeats*.
 
-By adding a RUN voltage the rate of decay can be modified. At 0V it takes exactly *repeats* to fade away. As RUN increases the repeats fade more quickly, however they will bounce back up when hitting the minimum. With around 1V the repeats will decay to near zero, then back to full volume by the last repeat. Further increasing this level 'folds' into multiple waves per set of repeats.
+By adding a RUN voltage the rate of decay can be modified. At 0V it takes exactly *repeats* to fade away. As RUN increases the repeats fade more quickly, however they will reflect back up when hitting the minimum. With around 1V the repeats will decay to near zero, then back to full volume by the last repeat, creating a triangle shape. Further increasing this level 'folds' into multiple waves per set of repeats.
 
-Negative values decrease the decay rate, making the fade out effect more and more subtle. At -5V the amplitudes are almost uniform.
+Negative values slow the decay rate, making the fade out effect more and more subtle. At -5V the amplitudes are almost uniform.
 
-Creative use of this behaviour can introduce a third temporal element to the Geode equation: TIME & INTONE set a base envelope rate, *divisions* sets the rhythm of notes, and RUN sets the amplitude cycle relative to *repeats*.
+Creative use of this behaviour can introduce a third temporal element to the Geode equation: *TIME* & *INTONE* set a base envelope rate, *divisions* sets the rhythm of notes, and *RUN* sets the amplitude cycle relative to *repeats*.
 
 This mode is useful for creating pseudo-delay envelopes.
 
@@ -373,22 +381,23 @@ This mode is useful for creating pseudo-delay envelopes.
 
 Applying RUN voltage emphasizes every 2nd then 3rd then 4th event, however all the in-between beats are available too. Subtle CV shifts allow for a variation of *groove* with nothing but volume manipulation.
 
-Negative RUN levels emphasize every fraction of a beat, which is a hard thing to control. As the voltage becomes lower the rhythmic cycles change more rapidly, starting to feel random. This zone is great to explore if you want to introduce some unpredictability into a rhythmic pattern.
+Negative RUN levels emphasize every fraction of a beat, which is a hard thing to think about, let alone control. As the voltage becomes lower the rhythmic cycles change more rapidly, starting to feel random. This zone is great to explore if you want to introduce some unpredictability into a rhythmic pattern.
 
 This mode is a source of endless subtle movement and works extra well with `QT` / `quantize()` active.
 
 
 ### Percussive Timebase
 
-*Geode* needs a timebase from which to calculate the rates for the envelope trains. This base can be set with a continuous stream of events (ie a clock) useful for when you need to synchronize the clocks to other elements. Alternatively a simple beats-per-minute value can be used if Just Friends is free running and doesn't need to play in time with others.
+*Geode* needs a timebase from which to calculate the rates for the envelope sequences. This base can be set with a continuous stream of events (ie a clock) useful for when you need to synchronize the events to other elements. Alternatively a simple beats-per-minute value can be used if Just Friends is free running and doesn't need to play in time with others.
 
 #### `JF.TICK divisions` / `ii.jf.tick( divisions )`
 
 Clock *Geode* with a stream of *divisions* ticks per measure.
 
 `divisions`
-* Tells Just Type how many `tick` messages will be received per measure.
+* Tells Just Type how many `tick` messages will be received per measure, where a measure is 4 beats.
 * 1 to 48 ticks per measure are allowed
+* 4 means 1 tick per beat
 * 0 acts a reset to synchronize to the start of the measure
 
 Typically `JF.TICK` / `tick()` will be called in a METRO. For 60 bpm, you can send `JF.TICK 4` once per second, or `JF.TICK 8` twice per second etc. Once you are comfortable using it in a standard way, the *divisions* value can be modulated to create rhythmically related clock multiplications and divisions of the *repeats*.
@@ -413,7 +422,7 @@ Returns the current *Geode* tempo in beats per minute.
 
 #### `JF.VOX channel divs repeats` / `ii.jf.play_voice( channel, divs, repeats )`
 
-Create a stream of rhythmic envelopes on the named *channel*. The stream will continue for the count of *repeats* at a rhythm defined by *divs*. Indefinite repeats are possible where repeats is set to -1.
+Create a stream of rhythmic envelopes on the named *channel*. The stream will continue for the count of *repeats* at a rhythm defined by *divs*.
 
 `channel`
 * select the channel to assign this rhythmic stream
@@ -421,7 +430,8 @@ Create a stream of rhythmic envelopes on the named *channel*. The stream will co
 
 `divs`
 * Divides the measure into this many segments
-* 4 would create quarter notes, while 15 would create 15 equally spaced notes per bar (weird!)
+* 4 creates quarter notes
+* 15 creates 15 equally spaced notes per bar (weird!)
 
 `repeats`
 * Number of times to retrigger the envelope
@@ -438,7 +448,8 @@ Works as `JF.VOX` / `play_voice()` but with dynamic allocation of channel. Assig
 
 `divs`
 * Divides the measure into this many segments
-* 4 would create quarter notes, while 15 would create 15 equally spaced notes per bar (weird!)
+* 4 creates quarter notes
+* 15 creates 15 equally spaced notes per bar (weird!)
 
 `repeats`
 * Number of times to retrigger the envelope
@@ -451,7 +462,7 @@ Works as `JF.VOX` / `play_voice()` but with dynamic allocation of channel. Assig
 
 #### `JF.QT divisions` / `ii.jf.quantize( divisions )`
 
-Quantize *Geode* events to *divisions* of the timebase
+Quantize *Geode* events to *divisions* of a measure.
 
 When non-zero, all events are queued & delayed until the next quantize event occurs. Using values that don't align with the division of rhythmic streams will cause irregular patterns to unfold.
 
@@ -460,7 +471,9 @@ When non-zero, all events are queued & delayed until the next quantize event occ
 * 0 deactivates quantization
 * 1 to 32 sets the subdivision & activates quantization
 
-If you need your rhythms to stay on a regular grid, activate that grid with Quantization. By setting a regular quantization (try 8 or 16) you can experiment with irregular *divisions* when triggering VOX or NOTE (try 7, 11, 13, 15) and those repeats will be locked into the quantized grid. Couple this with dynamic control over RUN and you have a very powerful groove generator with a few high level controls. Instant percussion inspiration!
+If you need your rhythms to stay on a regular grid, activate that grid with Quantization. By setting a regular quantization (try 8 or 16) you can experiment with irregular *divisions* when triggering `VOX` or `NOTE` (try 7, 11, 13, 15) and those repeats will be locked into the quantized grid. Couple this with dynamic control over RUN and you have a very powerful groove generator with a few high level controls. Instant percussion inspiration!
+
+While it uses a different implementation, this functionality can create [Euclidean rhythms](https://splice.com/blog/euclidean-rhythms/), though 'rotating' the rhythms requires delaying the `VOX` or `NOTE` calls.
 
 
 #### `JF.QT` *(proposed)* / `ii.jf.get( 'quantize' )`
@@ -489,7 +502,7 @@ Returns the number of *divisions* quantize is currently set to.
 *Geode*
 
 `JF.NOTE divs repeats` Play a sequence, dynamically allocated to a channel\
-`JF.VOX chanel divs repeats` Play a sequence on a specific *channel*\
+`JF.VOX channel divs repeats` Play a sequence on a specific *channel*\
 `JF.TICK divs` Clock *Geode* with a stream of ticks at *divs* per measure\
 `JF.TICK bpm` Set timebase for *Geode* with a static *bpm*\
 `JF.QT divs` Quantize *Geode* events to *divs* of the timebase
