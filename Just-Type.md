@@ -23,13 +23,13 @@ Get the [latest release](https://github.com/whimsicalraps/Just-Friends/releases/
 
 Each command has a description of the names & syntax for usage. Both Teletype & crow syntax is displayed and will take the following form:
 
-TT
+TT\
 `JF.COMMAND value` (set)\
-`<- JF.COMMAND` (get)\
+`JF.COMMAND` (get)
 
-crow
+crow\
 `ii.jf.command( value )` (set)\
-`ii.jf.get( 'command' )` (get) calls `ii.jf.event(e,value)`\
+`ii.jf.get( 'command' )` (get) calls `ii.jf.event(e,value)`
 
 Each command has 1 or 2 forms listed. These can be of 2 types:
 * 'setters' tell Just Friends to do something without expecting a response.
@@ -48,8 +48,7 @@ These commands allow remote control over Just Friends. Imagine a set of invisibl
 
 ### Triggers
 
-`JF.TR channel state` `JF.TR channel`\
-`ii.jf.trigger( channel, state )` `ii.jf.get('trigger')`\
+`JF.TR channel state` / `ii.jf.trigger( channel, state )`
 
 Create a TRIGGER event on the `channel` with the provided `state`.
 
@@ -63,10 +62,16 @@ Create a TRIGGER event on the `channel` with the provided `state`.
 
 Only *sustain* cares about the 'low' triggers (the others modes will simply ignore this message).
 
+#### `JF.TR channel` *(proposed)* / `ii.jf.get('trigger')`
+
+Returns 1 if the *channel* is moving. If *channel* is 0, returns the count of all active channels.
+
+
 ### Run Mode
 
-TT: `JF.RMODE mode`
-crow: `ii.crow.run_mode( mode )`
+`JF.RMODE mode` `JF.RMODE` *(proposed)*
+
+`ii.crow.run_mode( mode )` `ii.crow.get( 'run_mode' )`
 
 Set the RUN state of Just Friends when no physical jack is present.
 
@@ -77,11 +82,9 @@ Set the RUN state of Just Friends when no physical jack is present.
 
 ### Run Voltage
 
-TT get/set:
-`JF.RUN` `JF.RUN volts`
+`JF.RUN volts` `JF.RUN` *(proposed)*
 
-crow
-* set: `ii.jf.run( volts )`
+`ii.jf.run( volts )` `ii.jf.get( 'run' )`
 
 Send a 'voltage' to the RUN input.
 
@@ -92,6 +95,7 @@ Send a 'voltage' to the RUN input.
 
 *Requires JF.RMODE 1 to have been executed*.
 
+---
 
 ## Extended behaviour
 
@@ -139,13 +143,13 @@ NEW Geode now accepts 'float' ii commands from crow in range (1.0 .. 20.0)
 `JF.SHIFT volts` Transpose frequency / speed by *volts* (v/8)\
 `JF.VTR channel level` Trigger *channel* with velocity set by *level*\
 `JF.TUNE channel numerator denominator` Alter the INTONE relationship to IDENTITY\
-`JF.MODE state` Activates *Synthesis* or *Geode*\
+`JF.MODE state` Activates *Synthesis* or *Geode*
 
 *Synthesis*
 
 `JF.NOTE pitch level` Play a note, dynamically allocated to a voice\
 `JF.VOX chanel pitch level` Play a note on a specific voice\
-`JF.GOD state` If *state*, retune to A=432Hz (default A=440Hz)\
+`JF.GOD state` If *state*, retune to A=432Hz (default A=440Hz)
 
 *Geode*
 
@@ -153,12 +157,12 @@ NEW Geode now accepts 'float' ii commands from crow in range (1.0 .. 20.0)
 `JF.VOX chanel divs repeats` Play a sequence on a specific *channel*\
 `JF.TICK divs` Clock *Geode* with a stream of ticks at *divs* per measure\
 `JF.TICK bpm` Set timebase for *Geode* with a static *bpm*\
-`JF.QT divs` Quantize *Geode* events to *divs* of the timebase\
+`JF.QT divs` Quantize *Geode* events to *divs* of the timebase
 
 *Proposed commands, yet to be implemented as of Teletype 3.2*
 
 `JF.ADDR index` Set all connected Just Friends to ii address *index*\
-`JF.PITCH channel pitch` Same as `JF.VOX` but doesn't trigger the envelope\
+`JF.PITCH channel pitch` Same as `JF.VOX` but doesn't trigger the envelope
 
 ### Get values from Just Friends:
 
@@ -178,7 +182,7 @@ NEW Geode now accepts 'float' ii commands from crow in range (1.0 .. 20.0)
 `JF.CURVE` Returns the current state of the *CURVE* knob\
 `JF.FM` Returns the current state of the *FM* knob\
 `JF.TIME` Returns the current state of the *TIME* knob + cv\
-`JF.INTONE` Returns the current state of the *INTONE* knob + cv\
+`JF.INTONE` Returns the current state of the *INTONE* knob + cv
 
 # crow reference
 
