@@ -48,7 +48,7 @@ These commands allow remote control over Just Friends. Imagine a set of invisibl
 
 ### Triggers
 
-`JF.TR channel state` / `ii.jf.trigger( channel, state )`
+#### `JF.TR channel state` / `ii.jf.trigger( channel, state )`
 
 Create a TRIGGER event on the `channel` with the provided `state`.
 
@@ -69,9 +69,7 @@ Returns 1 if the *channel* is moving. If *channel* is 0, returns the count of al
 
 ### Run Mode
 
-`JF.RMODE mode` `JF.RMODE` *(proposed)*
-
-`ii.crow.run_mode( mode )` `ii.crow.get( 'run_mode' )`
+#### `JF.RMODE mode` / `ii.crow.run_mode( mode )`
 
 Set the RUN state of Just Friends when no physical jack is present.
 
@@ -79,14 +77,16 @@ Set the RUN state of Just Friends when no physical jack is present.
 * 1 activates RUN mode. All non-zero values are treated as high
 * 0 deactivates RUN. If a physical jack is present, RUN stays high.
 
+#### `JF.RMODE` *(proposed)* / `ii.crow.get( 'run_mode' )`
+
+Returns the *mode* as previously set. Ignores the state of the hardware RUN jack.
+
 
 ### Run Voltage
 
-`JF.RUN volts` `JF.RUN` *(proposed)*
+#### `JF.RUN volts` / `ii.jf.run( volts )`
 
-`ii.jf.run( volts )` `ii.jf.get( 'run' )`
-
-Send a 'voltage' to the RUN input.
+Send a virtual voltage to the RUN input.
 
 `volts`
 * The voltage to be virtually sent to the RUN jack. Adds to the physical state
@@ -95,7 +95,10 @@ Send a 'voltage' to the RUN input.
 
 *Requires JF.RMODE 1 to have been executed*.
 
----
+#### `JF.RUN` *(proposed)* / `ii.jf.get( 'run' )`
+
+Returns the most recently received *volts* setting. Ignores the hardware RUN jack voltage.
+
 
 ## Extended behaviour
 
