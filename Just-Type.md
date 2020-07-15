@@ -100,39 +100,6 @@ Send a virtual voltage to the RUN input.
 Returns the most recently received *volts* setting. Ignores the hardware RUN jack voltage.
 
 
-### Panel Queries
-
-TODO
-
-#### `JF.SPEED` *(proposed)* / `ii.jf.get( 'speed' )`
-
-Returns the current *shape* (0) or *sound* (1) switch position
-
-#### `JF.TSC` *(proposed)* / `ii.jf.get( 'tsc' )`
-
-Returns the current *MODE* switch state (1/2/3)
-
-#### `JF.RAMP` *(proposed)* / `ii.jf.get( 'ramp' )`
-
-Returns the current state of the *RAMP* knob
-
-#### `JF.CURVE` *(proposed)* / `ii.jf.get( 'curve' )`
-
-Returns the current state of the *CURVE* knob
-
-#### `JF.FM` *(proposed)* / `ii.jf.get( 'fm' )`
-
-Returns the current state of the *FM* knob
-
-#### `JF.TIME` *(proposed)* / `ii.jf.get( 'time' )`
-
-Returns the current state of the *TIME* knob + cv
-
-#### `JF.INTONE` *(proposed)* / `ii.jf.get( 'intone' )`
-
-Returns the current state of the *INTONE* knob + cv
-
-
 ## Extended behaviour
 
 This collection of commands extend the base capabilities of Just Friends, without totally changing the mode of interaction. They let you interact with the module in subtly different ways, and consider alternative approaches to creating compositional structure.
@@ -222,11 +189,49 @@ JF2.TR 1 1
 ```
 
 
+### Panel Queries
+
+The physical panel settings are able to queried too. With some outside-the-box thinking, you can use the Just Friends panel to manipulate parameters inside your script. This could augment the controls (eg. the *CURVE* value could change `vtrigger` level), or introduce additional dimensions (eg. *FM* could select different `TUNE` / `retune` ratios).
+
+While the lower 3 jacks (*RAMP*, *FM*, *CURVE*) send only the knob position, *TIME* and *INTONE* send a combination of the knob with any received CV. These signals are also mapped to the same scale as Just Type in *Synthesis* mode (see below). That means, a value of `V 0` / `0.0` is equal to C3. As such you could rapidly query the *TIME* control and convert it to a control-voltage with Teletype or crow - allowing for Just Friends to control the base pitch of multiple oscillators.
+
+Finally the parameters can be used entirely tangentially to Just Friends' functionality. *RAMP* could could the rate of a METRO, while *sound*/*shape* chose between major and minor arpeggios.
+
+
+#### `JF.SPEED` *(proposed)* / `ii.jf.get( 'speed' )`
+
+Returns the current *shape* (0) or *sound* (1) switch position
+
+#### `JF.TSC` *(proposed)* / `ii.jf.get( 'tsc' )`
+
+Returns the current *MODE* switch state (1/2/3)
+
+#### `JF.RAMP` *(proposed)* / `ii.jf.get( 'ramp' )`
+
+Returns the current state of the *RAMP* knob
+
+#### `JF.CURVE` *(proposed)* / `ii.jf.get( 'curve' )`
+
+Returns the current state of the *CURVE* knob
+
+#### `JF.FM` *(proposed)* / `ii.jf.get( 'fm' )`
+
+Returns the current state of the *FM* knob
+
+#### `JF.TIME` *(proposed)* / `ii.jf.get( 'time' )`
+
+Returns the current state of the *TIME* knob + cv
+
+#### `JF.INTONE` *(proposed)* / `ii.jf.get( 'intone' )`
+
+Returns the current state of the *INTONE* knob + cv
+
+
 ## Modal Personality
 
-Until now, we've only been speaking of modifying or extending the base Just Friends behaviours. Conversely, it is also possible to change some fundamentals of the JF system, leaning more heavily on the Teletype integration for configuration and control.
+Until now, we've only been speaking of modifying or extending the base Just Friends behaviours. Conversely, it is also possible to change some fundamentals of the JF system, leaning more heavily on the Teletype / crow integration for configuration and control.
 
-These alternate personalities are Synthesis, a polyphonic synthesizer; and Geode, a rhythm machine. JF.MODE 1 will take you to these modes respective of the sound/shape setting. Beware that whilst in JT's alternate modes, things will behave differently to normal & will remain there until power-cycling or exiting with JF.MODE 0.
+These alternate personalities are *Synthesis*, a polyphonic synthesizer; and *Geode*, a rhythm machine. `JF.MODE 1` / `ii.jf.mode(1)` will take you to these modes respective of the *sound*/*shape* setting. Beware that whilst in Just Type's alternate modes, things will behave differently to normal & will remain there until power-cycling or exiting with `JF.MODE 0` / `ii.jf.mode(0)`.
 
 #### `JF.MODE state` / `ii.jf.mode( mode )`
 
