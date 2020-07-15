@@ -116,7 +116,7 @@ Shifts the transposition of Just Friends, regardless of speed setting. Shifting 
 * On Teletype, use `N x` for semitones, or `V y` for octaves
 * On crow use `1.0` for volts, or `1/12` for semitones
 
-#### `JF.SHIFT` / `ii.jf.get( 'transpose' )`
+#### `JF.SHIFT` *(proposed)* / `ii.jf.get( 'transpose' )`
 
 Returns the current transposition setting.
 
@@ -245,7 +245,7 @@ Activates *Synthesis* or *Geode* modalities.
 You'll likely want to put `JF.MODE x` / `mode(x)` in your Teletype / crow INIT script.
 
 
-#### `JF.MODE` / `ii.jf.get( 'mode' )`
+#### `JF.MODE` *(proposed)* / `ii.jf.get( 'mode' )`
 
 Returns 1 if either *Synthesis* or *Geode* are active.
 
@@ -330,7 +330,7 @@ Redefines C3 to align with the 'God' note. See: https://attunedvibrations.com/43
 * 0 is A=440Hz
 * 1 is A=432Hz
 
-#### `JF.GOD` / `ii.jf.get( 'god_mode' )`
+#### `JF.GOD` *(proposed)* / `ii.jf.get( 'god_mode' )`
 
 Returns 1 if god mode is active.
 
@@ -404,7 +404,7 @@ Set timebase for *Geode* with a static *bpm*.
 * 0 acts a reset to synchronize to the start of the measure
 
 
-#### `JF.TICK` / `ii.jf.get( 'tick' )`
+#### `JF.TICK` *(proposed)* / `ii.jf.get( 'tick' )`
 
 Returns the current *Geode* tempo in beats per minute.
 
@@ -463,7 +463,7 @@ When non-zero, all events are queued & delayed until the next quantize event occ
 If you need your rhythms to stay on a regular grid, activate that grid with Quantization. By setting a regular quantization (try 8 or 16) you can experiment with irregular *divisions* when triggering VOX or NOTE (try 7, 11, 13, 15) and those repeats will be locked into the quantized grid. Couple this with dynamic control over RUN and you have a very powerful groove generator with a few high level controls. Instant percussion inspiration!
 
 
-#### `JF.QT` / `ii.jf.get( 'quantize' )`
+#### `JF.QT` *(proposed)* / `ii.jf.get( 'quantize' )`
 
 Returns the number of *divisions* quantize is currently set to.
 
