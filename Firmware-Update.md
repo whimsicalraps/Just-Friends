@@ -27,8 +27,8 @@ First you'll need to download the [latest firmware](https://github.com/whimsical
 ### Let's Go!
 
 * Turn on your synthesizer
-* 6N's light should be slowly pulsing
-* Start playback of the audio file, IDENTITY will light, showing signal is being received
+* 6N's light should be slowly pulsing (IDENTITY should be lit or dim, but static)
+* Start playback of the audio file, IDENTITY should flash subtly, showing signal is being received
 * 6N's light will move to 5N and dance with 4N for then next 90 seconds
 * 3N will light temporarily and then Just Friends will restart anew!
 * **Disconnect the cable from your playback device first, then from the RUN jack!**
