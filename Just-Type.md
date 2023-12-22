@@ -39,8 +39,6 @@ Some commands are 'set' only, while others and 'get' only, but many have both fu
 
 Furthermore, getters work quite differently on Teletype vs crow. For Teletype, the getter will query the value and return it directly. On crow, the response to a `ii.jf.get()` call will come through the `ii.jf.event( event, value )` function which you must add to your script. For an example, you can call `ii.jf.help()` and crow will show you what this event function should look like.
 
-Some of these commands have not been implemented on Teletype and are marked with *(proposed)* to indicate they are not currently accessible.
-
 
 ## The basics: Remote control
 
@@ -62,7 +60,7 @@ Create a TRIGGER event on the `channel` with the provided `state`.
 
 Only *sustain* cares about the *low* triggers (the others modes will simply ignore this message).
 
-#### `JF.TR channel` *(proposed)* / `ii.jf.get('trigger', channel)`
+#### `JF.TR channel` / `ii.jf.get('trigger', channel)`
 
 Returns 1 if the *channel* is moving. If *channel* is 0, returns the count of all active channels.
 
@@ -77,7 +75,7 @@ Set the RUN state of Just Friends when no physical jack is present.
 * 1 activates RUN mode. All non-zero values are treated as high
 * 0 deactivates RUN. If a physical jack is present, RUN stays high.
 
-#### `JF.RMODE` *(proposed)* / `ii.crow.get( 'run_mode' )`
+#### `JF.RMODE` / `ii.crow.get( 'run_mode' )`
 
 Returns the *mode* as previously set. Ignores the state of the hardware RUN jack.
 
@@ -95,7 +93,7 @@ Send a virtual voltage to the RUN input.
 
 *Requires `JF.RMODE 1` / `ii.jf.run_mode(1)` to have been executed*.
 
-#### `JF.RUN` *(proposed)* / `ii.jf.get( 'run' )`
+#### `JF.RUN` / `ii.jf.get( 'run' )`
 
 Returns the most recently received *volts* setting. Ignores the hardware RUN jack voltage.
 
@@ -117,7 +115,7 @@ Shifts the transposition of Just Friends, regardless of speed setting. Shifting 
 * On crow use `1.0` for octaves, or `1/12` for semitones
 * Microtonal transpositions are allowed to (especially useful for tuning)
 
-#### `JF.SHIFT` *(proposed)* / `ii.jf.get( 'transpose' )`
+#### `JF.SHIFT` / `ii.jf.get( 'transpose' )`
 
 Returns the current transposition setting.
 
@@ -163,7 +161,7 @@ If you want to retain your custom tuning permanently (across power-cycles), send
 
 ### Address (communicateing with two Just Friends simultaneously)
 
-#### `JF.ADDR index` *(proposed)* / `ii.jf.address( index )`
+#### `JF.ADDR index` / `ii.jf.address( index )`
 
 This is only useful when configuring an ii network with two Just Friends device. Note that all devices default to index 1.
 
@@ -184,7 +182,7 @@ ii.jf[1].trigger(1,1) -- device #1
 ii.jf[2].trigger(1,1) -- device #2
 ```
 
-Teletype will use the `JF2` prefix instead of `JF` *(proposed)*:
+Teletype will use the `JF2` prefix instead of `JF`:
 
 ```
 JF.TR 1 1
@@ -201,34 +199,34 @@ While the lower 3 jacks (*RAMP*, *FM*, *CURVE*) send only the knob position, *TI
 Finally the parameters can be used entirely tangentially to Just Friends' functionality. *RAMP* could control the rate of a METRO, while *sound*/*shape* choose between major and minor arpeggios.
 
 
-#### `JF.SPEED` *(proposed)* / `ii.jf.get( 'speed' )`
+#### `JF.SPEED` / `ii.jf.get( 'speed' )`
 
 Returns the current *shape* (0) or *sound* (1) switch position
 
-#### `JF.TSC` *(proposed)* / `ii.jf.get( 'tsc' )`
+#### `JF.TSC` / `ii.jf.get( 'tsc' )`
 
 Returns the current *MODE* switch state
 * 1 = *transient*
 * 2 = *sustain*
 * 3 = *cycle*
 
-#### `JF.RAMP` *(proposed)* / `ii.jf.get( 'ramp' )`
+#### `JF.RAMP` / `ii.jf.get( 'ramp' )`
 
 Returns the current state of the *RAMP* knob in volts (-5,5)
 
-#### `JF.CURVE` *(proposed)* / `ii.jf.get( 'curve' )`
+#### `JF.CURVE` / `ii.jf.get( 'curve' )`
 
 Returns the current state of the *CURVE* knob in volts (-5,5)
 
-#### `JF.FM` *(proposed)* / `ii.jf.get( 'fm' )`
+#### `JF.FM` / `ii.jf.get( 'fm' )`
 
 Returns the current state of the *FM* knob in volts (-5,5)
 
-#### `JF.TIME` *(proposed)* / `ii.jf.get( 'time' )`
+#### `JF.TIME` / `ii.jf.get( 'time' )`
 
 Returns the current state of the *TIME* knob + cv in volts (-5,5)
 
-#### `JF.INTONE` *(proposed)* / `ii.jf.get( 'intone' )`
+#### `JF.INTONE` / `ii.jf.get( 'intone' )`
 
 Returns the current state of the *INTONE* knob + cv in volts
 * 0 = C3
@@ -253,7 +251,7 @@ Activates *Synthesis* or *Geode* modalities.
 You'll likely want to put `JF.MODE x` / `ii.jf.mode(x)` in your Teletype / crow INIT script.
 
 
-#### `JF.MODE` *(proposed)* / `ii.jf.get( 'mode' )`
+#### `JF.MODE` / `ii.jf.get( 'mode' )`
 
 Returns 1 if either *Synthesis* or *Geode* are active.
 
@@ -313,7 +311,7 @@ Try turning the FM knob counter-clockwise and sequencing a fixed cycle of tones-
 
 ### Pitch Control (portamento)
 
-#### `JF.PITCH channel pitch` *(proposed)* / `ii.jf.pitch( channel, pitch )`
+#### `JF.PITCH channel pitch` / `ii.jf.pitch( channel, pitch )`
 
 Control the *pitch* of a chosen *channel* without triggering the envelope (like `JF.VOX` / `play_voice()`).
 
@@ -338,7 +336,7 @@ Redefines C3 to align with the 'God' note. See: https://attunedvibrations.com/43
 * 0 is A=440Hz
 * 1 is A=432Hz
 
-#### `JF.GOD` *(proposed)* / `ii.jf.get( 'god_mode' )`
+#### `JF.GOD` / `ii.jf.get( 'god_mode' )`
 
 Returns 1 if god mode is active.
 
@@ -413,7 +411,7 @@ Set timebase for *Geode* with a static *bpm*.
 * 0 acts a reset to synchronize to the start of the measure
 
 
-#### `JF.TICK` *(proposed)* / `ii.jf.get( 'tick' )`
+#### `JF.TICK` / `ii.jf.get( 'tick' )`
 
 Returns the current *Geode* tempo in beats per minute.
 
@@ -476,7 +474,7 @@ If you need your rhythms to stay on a regular grid, activate that grid with Quan
 While it uses a different implementation, this functionality can create [Euclidean rhythms](https://splice.com/blog/euclidean-rhythms/), though 'rotating' the rhythms requires delaying the `VOX` or `NOTE` calls.
 
 
-#### `JF.QT` *(proposed)* / `ii.jf.get( 'quantize' )`
+#### `JF.QT` / `ii.jf.get( 'quantize' )`
 
 Returns the number of *divisions* quantize is currently set to.
 
@@ -507,14 +505,7 @@ Returns the number of *divisions* quantize is currently set to.
 `JF.TICK bpm` Set timebase for *Geode* with a static *bpm*\
 `JF.QT divs` Quantize *Geode* events to *divs* of the timebase
 
-*Proposed commands, yet to be implemented as of Teletype 3.2*
-
-`JF.ADDR index` Set all connected Just Friends to ii address *index*\
-`JF.PITCH channel pitch` Same as `JF.VOX` but doesn't trigger the envelope
-
 ### Get values from Just Friends:
-
-*Proposed getters, yet to be implemented as of Teletype 3.2*
 
 `JF.TR channel` Returns true if the channel is in motion\
 `JF.RMODE` Returns the state of run_mode (ignores the jack)\
@@ -531,6 +522,11 @@ Returns the number of *divisions* quantize is currently set to.
 `JF.FM` Returns the current state of the *FM* knob\
 `JF.TIME` Returns the current state of the *TIME* knob + cv\
 `JF.INTONE` Returns the current state of the *INTONE* knob + cv
+
+### Miscellaneous
+
+`JF.ADDR index` Set all connected Just Friends to ii address *index*\
+`JF.PITCH channel pitch` Same as `JF.VOX` but doesn't trigger the envelope
 
 # crow reference
 
